@@ -1,5 +1,5 @@
 [package]
-name = "rustdate"
+name = "study_rust"
 version = "0.1.0"
 edition = "2021"
 
@@ -12,3 +12,7 @@ display_json = "0.2.1"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1.0.96"
 serde_yaml = "0.9.21"
+glob = "0.3.1"
+anyhow = "1.0.71"
+calamine = "0.19.1"
+rust_xlsxwriter = "0.38.0"
