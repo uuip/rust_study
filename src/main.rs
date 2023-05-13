@@ -1,5 +1,7 @@
 #![allow(dead_code, unused_variables)]
 
+use std::fs::{read_to_string, File};
+use std::io::{BufRead, BufReader};
 use std::net::Ipv4Addr;
 use std::str::FromStr;
 
@@ -14,6 +16,7 @@ mod study_enum;
 mod study_struct;
 
 fn main() {
+    read_yaml();
     let user1 = &User {
         name: "张某某".to_string(),
         age: 20,
@@ -22,6 +25,25 @@ fn main() {
     println!("{:?}", user1.gender.index());
     println!("{:?}", user1.summarize());
     println!("{}", user1)
+}
+
+fn read_yaml() {
+    let file = File::open(r"C:\Users\sharp\AppData\Local\Programs\clash_win\config.yaml").unwrap();
+    let data: serde_yaml::Value = serde_yaml::from_reader(file).unwrap();
+    println!("{:?}", data["dns"]["nameserver"].as_sequence().unwrap())
+}
+
+fn read_file_line() {
+    let file = File::open(r"D:\OneDrive\python\tool.py").unwrap();
+    for l in BufReader::new(file).lines() {
+        let line = l.unwrap();
+        println!("{line}")
+    }
+}
+
+fn read_file() {
+    let file = read_to_string(r"D:\OneDrive\python\tool.py").unwrap();
+    println!("{}", file)
 }
 
 fn study_datetime() {
