@@ -26,7 +26,6 @@ fn main() -> anyhow::Result<()> {
     write_file_line();
     read_yaml()?;
     write_yaml()?;
-    read_file();
     read_xlsx()?;
     write_xlsx()?;
     path_operation()?;
@@ -41,22 +40,10 @@ fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
-fn read_yaml() -> anyhow::Result<()> {
-    let file = File::open(r"C:\Users\sharp\AppData\Local\Programs\clash_win\config.yaml")?;
-    let data: serde_yaml::Value = serde_yaml::from_reader(file)?;
-
-    println!("{:?}", data["dns"]["nameserver"].as_sequence().unwrap());
-    Ok(())
+fn read_file() {
+    let file = read_to_string(r"D:\OneDrive\python\tool.py").unwrap();
+    println!("{}", file)
 }
-
-fn write_yaml() -> anyhow::Result<()> {
-    let rdr = File::open(r"C:\Users\sharp\AppData\Local\Programs\clash_win\config.yaml")?;
-    let data: serde_yaml::Value = serde_yaml::from_reader(rdr)?;
-    let writer = File::create("data.txt")?;
-    serde_yaml::to_writer(writer, &data)?;
-    Ok(())
-}
-
 fn read_file_line() -> anyhow::Result<()> {
     let file = File::open(r"D:\OneDrive\python\tool.py").unwrap();
     for l in BufReader::new(file).lines() {
@@ -65,12 +52,6 @@ fn read_file_line() -> anyhow::Result<()> {
     }
     Ok(())
 }
-
-fn read_file() {
-    let file = read_to_string(r"D:\OneDrive\python\tool.py").unwrap();
-    println!("{}", file)
-}
-
 fn write_file() -> anyhow::Result<()> {
     let mut file = File::create("data.txt")?;
     file.write_all("999".as_bytes())?;
@@ -85,6 +66,21 @@ fn write_file_line() {
             .write_all("ppp\n".as_bytes())
             .expect("error when write");
     }
+}
+fn read_yaml() -> anyhow::Result<()> {
+    let file = File::open(r"C:\Users\sharp\AppData\Local\Programs\clash_win\config.yaml")?;
+    let data: serde_yaml::Value = serde_yaml::from_reader(file)?;
+
+    println!("{:?}", data["dns"]["nameserver"].as_sequence().unwrap());
+    Ok(())
+}
+
+fn write_yaml() -> anyhow::Result<()> {
+    let rdr = File::open(r"C:\Users\sharp\AppData\Local\Programs\clash_win\config.yaml")?;
+    let data: serde_yaml::Value = serde_yaml::from_reader(rdr)?;
+    let writer = File::create("data.txt")?;
+    serde_yaml::to_writer(writer, &data)?;
+    Ok(())
 }
 
 fn read_xlsx() -> anyhow::Result<()> {
