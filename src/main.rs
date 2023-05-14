@@ -34,6 +34,10 @@ fn main() -> anyhow::Result<()> {
         age: 20,
         gender: Gender::Male,
     };
+    let data: serde_yaml::Value = serde_yaml::to_value(&user1)?;
+    let data1: serde_json::Value = serde_json::to_value(&user1)?;
+    println!("{}", serde_yaml::to_string(&data)?);
+    println!("{}", serde_json::to_string_pretty(&data1)?);
     println!("{:?}", user1.gender.index());
     println!("{:?}", user1.summarize());
     println!("{}", user1);
@@ -44,6 +48,7 @@ fn read_file() {
     let file = read_to_string(r"D:\OneDrive\python\tool.py").unwrap();
     println!("{}", file)
 }
+
 fn read_file_line() -> anyhow::Result<()> {
     let file = File::open(r"D:\OneDrive\python\tool.py").unwrap();
     for l in BufReader::new(file).lines() {
@@ -52,6 +57,7 @@ fn read_file_line() -> anyhow::Result<()> {
     }
     Ok(())
 }
+
 fn write_file() -> anyhow::Result<()> {
     let mut file = File::create("data.txt")?;
     file.write_all("999".as_bytes())?;
@@ -67,6 +73,7 @@ fn write_file_line() {
             .expect("error when write");
     }
 }
+
 fn read_yaml() -> anyhow::Result<()> {
     let file = File::open(r"C:\Users\sharp\AppData\Local\Programs\clash_win\config.yaml")?;
     let data: serde_yaml::Value = serde_yaml::from_reader(file)?;
