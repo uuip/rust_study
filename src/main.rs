@@ -33,7 +33,11 @@ fn main() -> anyhow::Result<()> {
     // write_xlsx()?;
     path_operation()?;
     study_datetime();
+    study_collections();
+    study_sort();
+    study_random();
     study_str2num().expect("TODO: panic message");
+
     let user1 = &User {
         name: "张某某".to_string(),
         age: 20,
@@ -46,10 +50,6 @@ fn main() -> anyhow::Result<()> {
     println!("{:?}", user1.gender.index());
     println!("{:?}", user1.summarize());
     println!("{}", user1);
-
-    study_collections();
-    study_sort();
-    study_random();
     Ok(())
 }
 
