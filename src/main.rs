@@ -91,6 +91,9 @@ fn study_sort() {
     let mut arr = [111.0, 11.0, 1.0];
     arr.sort_unstable_by(|a, b| a.partial_cmp(b).unwrap());
     println!("{:?}", arr);
+    let mut arr = ["ccc", "bbb", "aaa"];
+    arr.sort_unstable();
+    println!("{:?}", arr);
 }
 
 fn read_file() {
