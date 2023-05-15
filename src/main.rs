@@ -11,6 +11,7 @@ use calamine::Reader;
 use chrono::prelude::*;
 use chrono::Duration;
 use chrono_tz::Asia::Shanghai;
+use chrono_tz::UTC;
 use glob::glob;
 
 use crate::study_enum::Gender;
@@ -20,24 +21,26 @@ mod study_enum;
 mod study_struct;
 
 fn main() -> anyhow::Result<()> {
-    read_file();
-    write_file()?;
-    read_file_line()?;
-    write_file_line();
-    read_yaml()?;
-    write_yaml()?;
-    read_xlsx()?;
-    write_xlsx()?;
+    // read_file();
+    // write_file()?;
+    // read_file_line()?;
+    // write_file_line();
+    // read_yaml()?;
+    // write_yaml()?;
+    // read_xlsx()?;
+    // write_xlsx()?;
     path_operation()?;
+    study_datetime();
+    study_str2num().expect("TODO: panic message");
     let user1 = &User {
         name: "张某某".to_string(),
         age: 20,
         gender: Gender::Male,
     };
-    let data: serde_yaml::Value = serde_yaml::to_value(&user1)?;
-    let data1: serde_json::Value = serde_json::to_value(&user1)?;
+    let data: serde_yaml::Value = serde_yaml::to_value(user1)?;
+    let data1: serde_json::Value = serde_json::to_value(user1)?;
     println!("{}", serde_yaml::to_string(&data)?);
-    println!("{}", serde_json::to_string_pretty(&data1)?);
+    println!("{}", serde_json::to_string(&data1)?);
     println!("{:?}", user1.gender.index());
     println!("{:?}", user1.summarize());
     println!("{}", user1);
@@ -110,39 +113,69 @@ fn write_xlsx() -> anyhow::Result<()> {
 }
 
 fn path_operation() -> anyhow::Result<()> {
+    println!("{:?}", env::current_dir()?);
+    println!("{}", PathBuf::from("aaa").exists());
+
     for f in read_dir(".")? {
         println!("{:?}", f?.file_name())
     }
-    println!("{:?}", env::current_dir()?);
     for f in glob(r"D:\project\rust\rs-df/**/*.rs")? {
         let p = f?;
         println!("{:?} {}", p.file_name().unwrap(), p.is_dir())
     }
-    println!("{}", PathBuf::from("aaa").exists());
     Ok(())
 }
 
 fn study_datetime() {
-    println!("{}", Utc::now());
     let utc: DateTime<Utc> = Utc::now();
     let local: DateTime<Local> = Local::now();
-    let local1 = local.with_hour(5).unwrap();
-    println!("{}", local1);
-    let tz = FixedOffset::east_opt(8 * 3600).unwrap();
-    println!("{}", utc.with_timezone(&tz).format("%Y-%m-%d %H:%M:%S"));
+    println!("Utc now {}", utc);
+    println!("timestamp {}", Utc::now().timestamp());
     println!(
-        "{}",
+        "datetime from timestamp {}",
+        Shanghai.timestamp_opt(1683275206, 0).unwrap()
+    );
+    //转换时区
+    let tz = FixedOffset::east_opt(8 * 3600).unwrap();
+    println!(
+        "utc-> FixedOffset{}",
+        utc.with_timezone(&tz).format("%Y-%m-%d %H:%M:%S")
+    );
+    println!(
+        "utc-> Shanghai{}",
         utc.with_timezone(&Shanghai).format("%Y-%m-%d %H:%M:%S")
     );
-    println!("{}", Utc::now().timestamp());
-    println!("{}", Shanghai.timestamp_opt(1683275206, 0).unwrap());
+    // 替换时区
+    println!(
+        "replace tz {}",
+        local.naive_local().and_local_timezone(UTC).unwrap()
+    );
+    //修改日期--指定时间
+    let local1 = local.with_hour(5).unwrap();
+    println!("replace hour {}", local1);
     let dt1 = Utc.with_ymd_and_hms(2013, 11, 14, 8, 9, 10).unwrap();
     let dt2 = Utc.with_ymd_and_hms(2014, 1, 14, 10, 9, 8).unwrap();
+    //修改日期--增量
+    println!(
+        "add Duration {}",
+        dt1.checked_add_signed(Duration::days(1)).unwrap()
+    );
+    println!("add Duration {}", dt1 + Duration::days(1));
+    // 遍历某段时间
     let mut dt = dt1;
     while dt < dt2 {
         println!("{}", dt);
         dt += Duration::days(1);
     }
+}
+
+fn study_concat() {
+    let mut a = String::from("aaaa");
+    let b = String::from("bbbb");
+    println!("{}", a.clone() + "333");
+    a += &b;
+    let somestr = format!("{a}{b}");
+    println!("{}", somestr);
 }
 
 fn study_str2num() -> anyhow::Result<()> {
@@ -151,6 +184,13 @@ fn study_str2num() -> anyhow::Result<()> {
     let i2: i64 = s1.parse()?;
     let i3 = i64::from_str("456")?;
     println!("{i1} {i2} {i3}");
+
+    let f1 = 100.20.to_string();
+    let s1 = String::from("456.360");
+    let f2: f32 = s1.parse()?;
+    let f3 = f32::from_str(&s1)?;
+    let f4 = i3 as f32;
+    println!("{f1} {f2} {} {}", f3.type_name(), f4.type_name());
     Ok(())
 }
 
@@ -162,11 +202,12 @@ fn study_ipnetwork() -> anyhow::Result<()> {
     Ok(())
 }
 
-fn study_concat() {
-    let mut a = String::from("aaaa");
-    let b = String::from("bbbb");
-    println!("{}", a.clone() + "333");
-    a += &b;
-    let somestr = format!("{a}{b}");
-    println!("{}", somestr);
+pub trait AnyExt {
+    fn type_name(&self) -> &'static str;
+}
+
+impl<T> AnyExt for T {
+    fn type_name(&self) -> &'static str {
+        std::any::type_name::<T>()
+    }
 }
