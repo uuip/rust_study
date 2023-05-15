@@ -1,5 +1,6 @@
 #![allow(dead_code, unused_variables)]
 
+use std::collections::{HashMap, HashSet};
 use std::env;
 use std::fs::{read_dir, read_to_string, File};
 use std::io::{BufRead, BufReader, LineWriter, Write};
@@ -13,6 +14,7 @@ use chrono::Duration;
 use chrono_tz::Asia::Shanghai;
 use chrono_tz::UTC;
 use glob::glob;
+use rand::Rng;
 
 use crate::study_enum::Gender;
 use crate::study_struct::{Count, User};
@@ -44,7 +46,39 @@ fn main() -> anyhow::Result<()> {
     println!("{:?}", user1.gender.index());
     println!("{:?}", user1.summarize());
     println!("{}", user1);
+
+    study_collections();
+    study_sort();
+    study_random();
     Ok(())
+}
+
+fn study_random() {
+    let mut gen = rand::thread_rng();
+    // 1..=3右侧闭区间 1..3右侧开区间
+    let num: i32 = gen.gen_range(1..=3);
+    println!("{}", num);
+}
+
+fn study_collections() {
+    let mut set: HashSet<&str> = HashSet::new();
+    set.insert("aaa");
+    set.insert("aaa");
+    println!("{:?}", set);
+
+    let mut dict = HashMap::from([("key1", 2), ("key2", 22)]);
+    dict.entry("key3").or_insert(222);
+    dict.insert("key4", 2222);
+    println!("{:?}", dict);
+}
+
+fn study_sort() {
+    let mut arr = [111, 11, 1];
+    arr.sort_unstable();
+    println!("{:?}", arr);
+    let mut arr = [111.0, 11.0, 1.0];
+    arr.sort_unstable_by(|a, b| a.partial_cmp(b).unwrap());
+    println!("{:?}", arr);
 }
 
 fn read_file() {
