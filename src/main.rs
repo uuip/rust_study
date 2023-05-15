@@ -50,6 +50,8 @@ fn main() -> anyhow::Result<()> {
     println!("{:?}", user1.gender.index());
     println!("{:?}", user1.summarize());
     println!("{}", user1);
+
+    println!("{}", true && false);
     Ok(())
 }
 
@@ -65,11 +67,21 @@ fn study_collections() {
     set.insert("aaa");
     set.insert("aaa");
     println!("{:?}", set);
+    let set2: HashSet<&str> = ["bbb", "aaa"].into();
+    let rst = set.union(&set2).collect::<Vec<&&str>>();
+    println!("并集 {:?}", rst);
+    println!("交集 {:?}", set.intersection(&set2).collect::<Vec<&&str>>());
+    for item in set.iter() {
+        println!("{}", item)
+    }
 
     let mut dict = HashMap::from([("key1", 2), ("key2", 22)]);
     dict.entry("key3").or_insert(222);
     dict.insert("key4", 2222);
     println!("{:?}", dict);
+    for (k, v) in dict.iter() {
+        println!("{k}: {v}");
+    }
 }
 
 fn study_sort() {
