@@ -1,12 +1,12 @@
 #![allow(dead_code, unused_variables)]
 
 use std::collections::{HashMap, HashSet};
-use std::env;
 use std::fs::{read_dir, read_to_string, File};
 use std::io::{BufRead, BufReader, LineWriter, Write};
 use std::net::Ipv4Addr;
 use std::path::PathBuf;
 use std::str::FromStr;
+use std::{env, thread};
 
 use calamine::Reader;
 use chrono::prelude::*;
@@ -15,6 +15,8 @@ use chrono_tz::Asia::Shanghai;
 use chrono_tz::UTC;
 use glob::glob;
 use rand::Rng;
+use tracing::info;
+use tracing_appender::non_blocking::WorkerGuard;
 
 use crate::study_enum::Gender;
 use crate::study_struct::{Count, User};
@@ -23,6 +25,7 @@ mod study_enum;
 mod study_struct;
 
 fn main() -> anyhow::Result<()> {
+    let _g = init_logger();
     // read_file();
     // write_file()?;
     // read_file_line()?;
@@ -45,6 +48,7 @@ fn main() -> anyhow::Result<()> {
     };
     let data: serde_yaml::Value = serde_yaml::to_value(user1)?;
     let data1: serde_json::Value = serde_json::to_value(user1)?;
+
     println!("{}", serde_yaml::to_string(&data)?);
     println!("{}", serde_json::to_string(&data1)?);
     println!("{:?}", user1.gender.index());
@@ -52,7 +56,39 @@ fn main() -> anyhow::Result<()> {
     println!("{}", user1);
 
     println!("{}", true && false);
+    thread::sleep(std::time::Duration::from_secs(0));
+    let a = Box::new("33");
+    println!("{}", (*a).type_name());
+
+    info!("yyyzzz");
     Ok(())
+}
+
+fn init_logger() -> WorkerGuard {
+    use time::macros::format_description;
+    use tracing_appender::rolling;
+    use tracing_subscriber::fmt::time::LocalTime;
+    use tracing_subscriber::{fmt, layer::SubscriberExt, util::SubscriberInitExt};
+
+    let timer = LocalTime::new(format_description!(
+        "[year]-[month]-[day] [hour]:[minute]:[second].[subsecond digits:3]"
+    ));
+    // let timer = LocalTime::new(time::format_description::well_known::Rfc3339);
+
+    let file_appender = rolling::hourly("/Users/sharp/Desktop/rust/rustStudy", "prefixgg.log");
+    let (non_blocking, _guard) = tracing_appender::non_blocking(file_appender);
+    let file_layer = fmt::Layer::new()
+        .with_timer(timer.clone())
+        .with_ansi(false)
+        .with_writer(non_blocking);
+
+    let console_layer = fmt::Layer::new().with_timer(timer);
+
+    tracing_subscriber::registry()
+        .with(file_layer)
+        .with(console_layer)
+        .init();
+    _guard
 }
 
 fn study_random() {
