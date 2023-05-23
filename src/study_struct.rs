@@ -1,7 +1,7 @@
-use crate::study_enum::Gender;
-
 use display_json::{DebugAsJsonPretty, DisplayAsJsonPretty};
 use serde::Serialize;
+
+use crate::study_enum::Gender;
 
 #[derive(Serialize, DisplayAsJsonPretty, DebugAsJsonPretty)]
 pub struct User {

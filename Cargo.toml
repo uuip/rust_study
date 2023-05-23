@@ -17,7 +17,7 @@ anyhow = "1.0.71"
 calamine = "0.19.1"
 rust_xlsxwriter = "0.38.0"
 rand = "0.8.5"
-clap = { version = "4.3.0", features = ["derive"] }
+clap = { version = "4.3", features = ["derive"] }
 
 tracing-appender = { package = "clia-tracing-appender", version = "0.2" }
 tracing-subscriber = { version = "0.3", features = ["local-time","time"] }
